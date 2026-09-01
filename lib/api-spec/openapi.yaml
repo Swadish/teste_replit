@@ -3,13 +3,25 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Commission Automation API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: overview
+    description: Workspace summary operations
+  - name: datasources
+    description: Sales and commission data sources
+  - name: calculations
+    description: Commission calculation rules
+  - name: dashboards
+    description: Shared commission dashboards
+  - name: payments
+    description: Payment runs and delivery outputs
+  - name: activity
+    description: Workspace activity history
 paths:
   /healthz:
     get:
@@ -24,13 +36,684 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /overview:
+    get:
+      operationId: getOverview
+      tags: [overview]
+      summary: Get workspace overview
+      responses:
+        "200":
+          description: Overview metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Overview"
+  /datasources:
+    get:
+      operationId: listDatasources
+      tags: [datasources]
+      summary: List data sources
+      responses:
+        "200":
+          description: Data source list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Datasource"
+    post:
+      operationId: createDatasource
+      tags: [datasources]
+      summary: Create a data source
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DatasourceInput"
+      responses:
+        "201":
+          description: Created data source
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Datasource"
+  /datasources/{id}:
+    patch:
+      operationId: updateDatasource
+      tags: [datasources]
+      summary: Update a data source
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DatasourceUpdate"
+      responses:
+        "200":
+          description: Updated data source
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Datasource"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteDatasource
+      tags: [datasources]
+      summary: Delete a data source
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /datasources/{id}/sync:
+    post:
+      operationId: syncDatasource
+      tags: [datasources]
+      summary: Sync a data source
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Synced data source
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Datasource"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /calculations:
+    get:
+      operationId: listCalculations
+      tags: [calculations]
+      summary: List calculation rules
+      responses:
+        "200":
+          description: Calculation list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Calculation"
+    post:
+      operationId: createCalculation
+      tags: [calculations]
+      summary: Create a calculation rule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CalculationInput"
+      responses:
+        "201":
+          description: Created calculation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Calculation"
+  /calculations/{id}:
+    patch:
+      operationId: updateCalculation
+      tags: [calculations]
+      summary: Update a calculation rule
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CalculationUpdate"
+      responses:
+        "200":
+          description: Updated calculation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Calculation"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteCalculation
+      tags: [calculations]
+      summary: Delete a calculation rule
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /calculations/{id}/run:
+    post:
+      operationId: runCalculation
+      tags: [calculations]
+      summary: Run a calculation rule
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Calculation run result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CalculationRun"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /dashboards:
+    get:
+      operationId: listDashboards
+      tags: [dashboards]
+      summary: List dashboards
+      responses:
+        "200":
+          description: Dashboard list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Dashboard"
+    post:
+      operationId: createDashboard
+      tags: [dashboards]
+      summary: Create a dashboard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DashboardInput"
+      responses:
+        "201":
+          description: Created dashboard
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+  /dashboards/{id}:
+    patch:
+      operationId: updateDashboard
+      tags: [dashboards]
+      summary: Update a dashboard
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DashboardUpdate"
+      responses:
+        "200":
+          description: Updated dashboard
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteDashboard
+      tags: [dashboards]
+      summary: Delete a dashboard
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /dashboards/{id}/share:
+    post:
+      operationId: shareDashboard
+      tags: [dashboards]
+      summary: Add dashboard access
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DashboardShareInput"
+      responses:
+        "200":
+          description: Updated dashboard access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /payments/runs:
+    get:
+      operationId: listPaymentRuns
+      tags: [payments]
+      summary: List payment runs
+      responses:
+        "200":
+          description: Payment run list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentRun"
+    post:
+      operationId: createPaymentRun
+      tags: [payments]
+      summary: Create a payment run
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentRunInput"
+      responses:
+        "201":
+          description: Created payment run
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentRun"
+  /payments/runs/{id}/export:
+    post:
+      operationId: exportPaymentRun
+      tags: [payments]
+      summary: Export a payment run as CSV
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Exported payment run
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentRun"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /payments/runs/{id}/webhook:
+    post:
+      operationId: sendPaymentWebhook
+      tags: [payments]
+      summary: Send a payment run webhook
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Delivered payment webhook
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentRun"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /activity:
+    get:
+      operationId: listActivity
+      tags: [activity]
+      summary: List recent workspace activity
+      responses:
+        "200":
+          description: Activity feed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Activity"
 components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: number
+        minimum: 1
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
   schemas:
     HealthStatus:
       type: object
       properties:
         status:
           type: string
-      required:
-        - status
-
+      required: [status]
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+    Datasource:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        type:
+          type: string
+          enum: [spreadsheet, api]
+        status:
+          type: string
+          enum: [connected, syncing, needs_attention]
+        rows:
+          type: number
+        lastSync:
+          type: ["string", "null"]
+          format: date-time
+        source:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, name, type, status, rows, lastSync, source, createdAt]
+    DatasourceInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        type:
+          type: string
+          enum: [spreadsheet, api]
+        source:
+          type: string
+          minLength: 1
+      required: [name, type, source]
+    DatasourceUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        source:
+          type: string
+          minLength: 1
+        status:
+          type: string
+          enum: [connected, syncing, needs_attention]
+    Calculation:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [active, draft, needs_review]
+        formula:
+          type: string
+        filters:
+          type: array
+          items:
+            type: string
+        groupBy:
+          type: array
+          items:
+            type: string
+        lastRun:
+          type: ["string", "null"]
+          format: date-time
+        output:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, name, description, status, formula, filters, groupBy, lastRun, output, updatedAt]
+    CalculationInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        formula:
+          type: string
+          minLength: 1
+        filters:
+          type: array
+          items:
+            type: string
+        groupBy:
+          type: array
+          items:
+            type: string
+        output:
+          type: string
+      required: [name, description, formula, filters, groupBy, output]
+    CalculationUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        formula:
+          type: string
+          minLength: 1
+        filters:
+          type: array
+          items:
+            type: string
+        groupBy:
+          type: array
+          items:
+            type: string
+        output:
+          type: string
+        status:
+          type: string
+          enum: [active, draft, needs_review]
+    CalculationRun:
+      type: object
+      properties:
+        calculationId:
+          type: number
+        status:
+          type: string
+          enum: [completed, failed]
+        rowsProcessed:
+          type: number
+        totalCommission:
+          type: number
+        completedAt:
+          type: string
+          format: date-time
+      required: [calculationId, status, rowsProcessed, totalCommission, completedAt]
+    Dashboard:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
+          type: string
+        visibility:
+          type: string
+          enum: [private, shared, public]
+        audience:
+          type: string
+        widgets:
+          type: array
+          items:
+            type: string
+        access:
+          type: array
+          items:
+            $ref: "#/components/schemas/DashboardAccess"
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, name, description, visibility, audience, widgets, access, updatedAt]
+    DashboardInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        visibility:
+          type: string
+          enum: [private, shared, public]
+        audience:
+          type: string
+        widgets:
+          type: array
+          items:
+            type: string
+      required: [name, description, visibility, audience, widgets]
+    DashboardUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        visibility:
+          type: string
+          enum: [private, shared, public]
+        audience:
+          type: string
+        widgets:
+          type: array
+          items:
+            type: string
+    DashboardShareInput:
+      type: object
+      properties:
+        email:
+          type: string
+        role:
+          type: string
+          enum: [salesperson, recipient, manager]
+      required: [email, role]
+    DashboardAccess:
+      type: object
+      properties:
+        email:
+          type: string
+        role:
+          type: string
+          enum: [salesperson, recipient, manager]
+      required: [email, role]
+    PaymentRun:
+      type: object
+      properties:
+        id:
+          type: number
+        period:
+          type: string
+        status:
+          type: string
+          enum: [ready, processing, paid, failed]
+        amount:
+          type: number
+        recipients:
+          type: number
+        exportStatus:
+          type: string
+          enum: [not_exported, exported]
+        webhookStatus:
+          type: string
+          enum: [not_sent, delivered, failed]
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, period, status, amount, recipients, exportStatus, webhookStatus, createdAt]
+    PaymentRunInput:
+      type: object
+      properties:
+        period:
+          type: string
+          minLength: 1
+        calculationId:
+          type: number
+          minimum: 1
+      required: [period, calculationId]
+    Activity:
+      type: object
+      properties:
+        id:
+          type: number
+        type:
+          type: string
+          enum: [sync, calculation, dashboard, payment, share]
+        title:
+          type: string
+        detail:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, type, title, detail, createdAt]
+    Overview:
+      type: object
+      properties:
+        totalCommission:
+          type: number
+        totalCommissionDelta:
+          type: number
+        activeSalespeople:
+          type: number
+        activeSalespeopleDelta:
+          type: number
+        pendingPayments:
+          type: number
+        pendingPaymentsCount:
+          type: number
+        dataRows:
+          type: number
+        dataRowsDelta:
+          type: number
+        commissionTrend:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrendPoint"
+        commissionByTeam:
+          type: array
+          items:
+            $ref: "#/components/schemas/TeamCommission"
+      required: [totalCommission, totalCommissionDelta, activeSalespeople, activeSalespeopleDelta, pendingPayments, pendingPaymentsCount, dataRows, dataRowsDelta, commissionTrend, commissionByTeam]
+    TrendPoint:
+      type: object
+      properties:
+        label:
+          type: string
+        value:
+          type: number
+      required: [label, value]
+    TeamCommission:
+      type: object
+      properties:
+        team:
+          type: string
+        value:
+          type: number
+        color:
+          type: string
+      required: [team, value, color]

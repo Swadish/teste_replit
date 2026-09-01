@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Commission Automation"
+description = "A workflow workspace for importing sales data, configuring commission calculations, sharing role-based dashboards, and generating payment-ready exports and webhooks."
+version = "1.0.0"
+id = "artifacts/commission-automation"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18633
+
+[services.development]
+run = "pnpm --filter @workspace/commission-automation run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/commission-automation", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/commission-automation/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18633"
+BASE_PATH = "/"
